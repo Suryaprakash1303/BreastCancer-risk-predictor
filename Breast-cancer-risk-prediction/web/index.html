@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Breast Cancer Risk Predictor & Analytics Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <!-- Chart.js CDN for plotting -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <!-- Welcome Overlay Screen -->
+    <div id="welcome-screen" class="welcome-screen">
+        <div class="welcome-card">
+            <div class="welcome-logo">
+                <svg viewBox="0 0 24 24" width="60" height="60" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+                </svg>
+            </div>
+            <h1>BreastCare AI Suite</h1>
+            <p class="welcome-subtitle">Advanced Machine Learning Predictive Diagnostics for Breast Cancer Detection</p>
+            
+            <div class="welcome-features">
+                <div class="w-feature">
+                    <div class="w-feat-icon">
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="4" y1="9" x2="20" y2="9"></line>
+                            <line x1="4" y1="15" x2="20" y2="15"></line>
+                            <line x1="10" y1="3" x2="8" y2="21"></line>
+                            <line x1="16" y1="3" x2="14" y2="21"></line>
+                        </svg>
+                    </div>
+                    <div class="w-feat-text">
+                        <strong>Interactive Diagnostic Sliders</strong>
+                        <span>Adjust 10 cell nuclei properties to predict malignancy risk dynamically.</span>
+                    </div>
+                </div>
+                <div class="w-feature">
+                    <div class="w-feat-icon">
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="18" y1="20" x2="18" y2="10"></line>
+                            <line x1="12" y1="20" x2="12" y2="4"></line>
+                            <line x1="6" y1="20" x2="6" y2="14"></line>
+                        </svg>
+                    </div>
+                    <div class="w-feat-text">
+                        <strong>Visual Data Explorer</strong>
+                        <span>Investigate feature correlations and distribution histograms dynamically.</span>
+                    </div>
+                </div>
+                <div class="w-feature">
+                    <div class="w-feat-icon">
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"></path>
+                            <path d="M12 6v6l4 2"></path>
+                        </svg>
+                    </div>
+                    <div class="w-feat-text">
+                        <strong>Multi-Classifier Consensus</strong>
+                        <span>Cross-reference predictions from trained Linear SVM and Logistic Regression models.</span>
+                    </div>
+                </div>
+            </div>
+            
+            <button id="get-started-btn" class="btn btn-primary btn-lg btn-glow">
+                Enter Diagnostic Console
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                    <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <div class="app-container hidden">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="logo-area">
+                <div class="logo-icon">
+                    <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+                    </svg>
+                </div>
+                <h2>BreastCare AI</h2>
+            </div>
+            
+            <nav class="nav-menu">
+                <button class="nav-item active" data-tab="predictor">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="9" y1="3" x2="9" y2="21"></line>
+                        <line x1="15" y1="3" x2="15" y2="21"></line>
+                        <line x1="3" y1="9" x2="21" y2="9"></line>
+                        <line x1="3" y1="15" x2="21" y2="15"></line>
+                    </svg>
+                    <span>Risk Predictor</span>
+                </button>
+                <button class="nav-item" data-tab="analytics">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="20" x2="18" y2="10"></line>
+                        <line x1="12" y1="20" x2="12" y2="4"></line>
+                        <line x1="6" y1="20" x2="6" y2="14"></line>
+                    </svg>
+                    <span>Exploratory Analytics</span>
+                </button>
+                <button class="nav-item" data-tab="performance">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                    <span>Model Performance</span>
+                </button>
+                <button class="nav-item" data-tab="dataset-info">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="16" x2="12" y2="12"></line>
+                        <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                    </svg>
+                    <span>Dataset Info</span>
+                </button>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <p class="status-indicator"><span class="pulse-dot"></span> Local Server Active</p>
+                <span class="version-label">v1.0.0</span>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Top Header -->
+            <header class="top-header">
+                <div class="header-title">
+                    <h1 id="page-title">Breast Cancer Risk Predictor</h1>
+                    <p id="page-subtitle" class="subtitle">Interactive ML Diagnostic Assistant using the Wisconsin Breast Cancer Dataset</p>
+                </div>
+                <div class="header-actions">
+                    <span class="badge badge-accent">Interactive Predictive Analytics</span>
+                </div>
+            </header>
+
+            <!-- Content Tabs -->
+            <div class="tab-container">
+                
+                <!-- 1. Interactive Predictor Tab -->
+                <section id="predictor-tab" class="tab-content active">
+                    <div class="grid-2col">
+                        <!-- Left Panel: Feature Sliders -->
+                        <div class="card panel-sliders">
+                            <div class="card-header">
+                                <h3>Cell Nuclei Parameters</h3>
+                                <p>Adjust sliders to match patient diagnostic measurements (mean values of cell nuclei).</p>
+                            </div>
+                            <div id="sliders-container" class="sliders-list">
+                                <!-- Sliders generated dynamically by JavaScript -->
+                                <div class="loading-placeholder">Loading model metadata...</div>
+                            </div>
+                            <div class="card-footer">
+                                <button id="reset-sliders-btn" class="btn btn-secondary">
+                                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
+                                    </svg>
+                                    Reset to Sample Averages
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Right Panel: Prediction Results -->
+                        <div class="prediction-panel">
+                            <!-- Overall Risk Card -->
+                            <div class="card main-result-card">
+                                <div class="card-header centered">
+                                    <h3>Risk Diagnosis Score</h3>
+                                </div>
+                                <div class="card-body centered">
+                                    <!-- Dial Gauge Representation -->
+                                    <div class="gauge-wrapper">
+                                        <svg class="gauge" viewBox="0 0 100 50">
+                                            <!-- Background Arc -->
+                                            <path class="gauge-bg" d="M 10 50 A 40 40 0 0 1 90 50" fill="none" stroke-width="8"></path>
+                                            <!-- Fill Arc -->
+                                            <path id="gauge-fill" class="gauge-fill benign" d="M 10 50 A 40 40 0 0 1 90 50" fill="none" stroke-width="8" stroke-dasharray="125.6" stroke-dashoffset="125.6"></path>
+                                        </svg>
+                                        <div class="gauge-text">
+                                            <span id="risk-percentage">0%</span>
+                                            <span class="label">Malignancy Risk</span>
+                                        </div>
+                                    </div>
+
+                                    <div id="verdict-banner" class="verdict-banner benign-banner">
+                                        <h2 id="verdict-text">BENIGN DETECTED</h2>
+                                        <p id="verdict-desc">The features strongly align with normal, non-cancerous breast tissue measurements.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Model Outputs Breakdown -->
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3>Classifier Consensus</h3>
+                                </div>
+                                <div class="card-body model-breakdown-list">
+                                    <!-- Logistic Regression Output -->
+                                    <div class="model-row">
+                                        <div class="model-meta">
+                                            <span class="model-name">Logistic Regression</span>
+                                            <span class="model-badge">Sigmoid Prob</span>
+                                        </div>
+                                        <div class="progress-bar-wrapper">
+                                            <div class="progress-bar-bg">
+                                                <div id="lr-progress" class="progress-fill" style="width: 0%"></div>
+                                            </div>
+                                            <span id="lr-prob-label" class="progress-val">0.0%</span>
+                                        </div>
+                                    </div>
+                                    <!-- SVM Output -->
+                                    <div class="model-row">
+                                        <div class="model-meta">
+                                            <span class="model-name">Linear Support Vector Machine</span>
+                                            <span class="model-badge">Boundary Distance</span>
+                                        </div>
+                                        <div class="progress-bar-wrapper">
+                                            <div class="progress-bar-bg">
+                                                <div id="svm-progress" class="progress-fill" style="width: 0%"></div>
+                                            </div>
+                                            <span id="svm-prob-label" class="progress-val">0.0%</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Warning/Notice -->
+                            <div class="alert alert-info">
+                                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <line x1="12" y1="16" x2="12" y2="12"></line>
+                                    <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                                </svg>
+                                <p><strong>Disclaimer:</strong> This dashboard is powered by machine learning models trained for research and educational purposes. It is not an official medical tool and must not replace professional clinical diagnosis.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 2. Exploratory Data Analysis (EDA) Tab -->
+                <section id="analytics-tab" class="tab-content">
+                    <div class="grid-2col equal-height">
+                        <!-- Heatmap Card -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h3>Feature Correlation Matrix</h3>
+                                <p>Hover over cells to see the Pearson correlation coefficient between key nuclear features.</p>
+                            </div>
+                            <div class="card-body heatmap-container">
+                                <div id="correlation-heatmap" class="heatmap-grid">
+                                    <!-- Dynamic Heatmap Rendered by JS -->
+                                    <div class="loading-placeholder">Loading correlation data...</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Distribution Charts Card -->
+                        <div class="card">
+                            <div class="card-header flex-header">
+                                <div>
+                                    <h3>Feature Distributions</h3>
+                                    <p>Compare the shape and range of features for Malignant vs Benign tissues.</p>
+                                </div>
+                                <select id="feature-selector" class="dropdown">
+                                    <!-- Populated by JS -->
+                                </select>
+                            </div>
+                            <div class="card-body chart-body">
+                                <canvas id="distribution-chart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 3. Model Performance Tab -->
+                <section id="performance-tab" class="tab-content">
+                    <div class="card performance-summary-card">
+                        <div class="card-header">
+                            <h3>Model Performance Metrics Summary</h3>
+                            <p>Evaluated on a 30% holdout test split (171 patient samples) from the cleaned dataset.</p>
+                        </div>
+                        <div class="card-body metrics-summary-grid">
+                            <div class="metrics-card lr-border">
+                                <div class="metrics-header">
+                                    <h4>Logistic Regression Classifier</h4>
+                                    <span class="badge badge-lr">LR Model</span>
+                                </div>
+                                <div class="metrics-grid">
+                                    <div class="metric-item"><span class="metric-val" id="lr-metric-accuracy">0%</span><span class="metric-lbl">Accuracy</span></div>
+                                    <div class="metric-item"><span class="metric-val" id="lr-metric-precision">0%</span><span class="metric-lbl">Precision</span></div>
+                                    <div class="metric-item"><span class="metric-val" id="lr-metric-recall">0%</span><span class="metric-lbl">Recall</span></div>
+                                    <div class="metric-item"><span class="metric-val" id="lr-metric-f1">0%</span><span class="metric-lbl">F1 Score</span></div>
+                                </div>
+                            </div>
+                            <div class="metrics-card svm-border">
+                                <div class="metrics-header">
+                                    <h4>Linear Support Vector Classifier</h4>
+                                    <span class="badge badge-svm">SVM Model</span>
+                                </div>
+                                <div class="metrics-grid">
+                                    <div class="metric-item"><span class="metric-val" id="svm-metric-accuracy">0%</span><span class="metric-lbl">Accuracy</span></div>
+                                    <div class="metric-item"><span class="metric-val" id="svm-metric-precision">0%</span><span class="metric-lbl">Precision</span></div>
+                                    <div class="metric-item"><span class="metric-val" id="svm-metric-recall">0%</span><span class="metric-lbl">Recall</span></div>
+                                    <div class="metric-item"><span class="metric-val" id="svm-metric-f1">0%</span><span class="metric-lbl">F1 Score</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid-2col">
+                        <!-- ROC Curve Card -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h3>Receiver Operating Characteristic (ROC) Curves</h3>
+                                <p>A comparison of true positive rate vs false positive rate for both models.</p>
+                            </div>
+                            <div class="card-body chart-body">
+                                <canvas id="roc-chart"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Confusion Matrices -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h3>Confusion Matrices (Test Set Predictions)</h3>
+                                <p>Visualizing True Positives (TP), True Negatives (TN), False Positives (FP), and False Negatives (FN).</p>
+                            </div>
+                            <div class="card-body cm-flex-container">
+                                <!-- LR CM -->
+                                <div class="cm-box">
+                                    <h5>Logistic Regression Matrix</h5>
+                                    <div class="cm-grid">
+                                        <div class="cm-cell cm-header-cell"></div>
+                                        <div class="cm-cell cm-header-cell text-center">Actual B</div>
+                                        <div class="cm-cell cm-header-cell text-center">Actual M</div>
+                                        
+                                        <div class="cm-cell cm-header-cell text-right valign-center">Predicted B</div>
+                                        <div class="cm-cell cm-data-cell cm-tn" id="cm-lr-tn">0</div>
+                                        <div class="cm-cell cm-data-cell cm-fn" id="cm-lr-fn">0</div>
+                                        
+                                        <div class="cm-cell cm-header-cell text-right valign-center">Predicted M</div>
+                                        <div class="cm-cell cm-data-cell cm-fp" id="cm-lr-fp">0</div>
+                                        <div class="cm-cell cm-data-cell cm-tp" id="cm-lr-tp">0</div>
+                                    </div>
+                                </div>
+                                <!-- SVM CM -->
+                                <div class="cm-box">
+                                    <h5>Linear SVM Matrix</h5>
+                                    <div class="cm-grid">
+                                        <div class="cm-cell cm-header-cell"></div>
+                                        <div class="cm-cell cm-header-cell text-center">Actual B</div>
+                                        <div class="cm-cell cm-header-cell text-center">Actual M</div>
+                                        
+                                        <div class="cm-cell cm-header-cell text-right valign-center">Predicted B</div>
+                                        <div class="cm-cell cm-data-cell cm-tn" id="cm-svm-tn">0</div>
+                                        <div class="cm-cell cm-data-cell cm-fn" id="cm-svm-fn">0</div>
+                                        
+                                        <div class="cm-cell cm-header-cell text-right valign-center">Predicted M</div>
+                                        <div class="cm-cell cm-data-cell cm-fp" id="cm-svm-fp">0</div>
+                                        <div class="cm-cell cm-data-cell cm-tp" id="cm-svm-tp">0</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 4. Dataset Info Tab -->
+                <section id="dataset-info-tab" class="tab-content">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Wisconsin Breast Cancer Diagnostic Dataset Details</h3>
+                            <p>Information on feature extraction and how cell nuclei properties are measured.</p>
+                        </div>
+                        <div class="card-body dataset-info-body">
+                            <p>Features are computed from a digitized image of a fine needle aspirate (FNA) of a breast mass. They describe characteristics of the cell nuclei present in the image.</p>
+                            
+                            <h4>Feature Interpretations:</h4>
+                            <ul>
+                                <li><strong>Radius:</strong> Mean of distances from center to points on the perimeter of the cell nucleus.</li>
+                                <li><strong>Texture:</strong> Standard deviation of gray-scale values (roughness vs. smoothness of the cell texture).</li>
+                                <li><strong>Perimeter & Area:</strong> Measures size of the cell nucleus, which is typically larger and more irregular in malignant cells.</li>
+                                <li><strong>Smoothness:</strong> Local variation in radius lengths.</li>
+                                <li><strong>Compactness:</strong> Computed as <code>perimeter² / (area - 1.0)</code>. Indicates how close to a perfect circle the cell is.</li>
+                                <li><strong>Concavity:</strong> Severity of concave portions of the nucleus contour.</li>
+                                <li><strong>Concave Points:</strong> Number of concave portions of the contour.</li>
+                                <li><strong>Symmetry:</strong> Measures cell symmetry, often disrupted in cancer cells.</li>
+                                <li><strong>Fractal Dimension:</strong> Measures the complexity of the nuclear boundary ("coastline approximation").</li>
+                            </ul>
+
+                            <div class="info-graphics grid-3col">
+                                <div class="info-stat-card">
+                                    <span class="stat-number">569</span>
+                                    <span class="stat-label">Total Patients</span>
+                                </div>
+                                <div class="info-stat-card">
+                                    <span class="stat-number text-danger">212</span>
+                                    <span class="stat-label">Malignant (37.3%)</span>
+                                </div>
+                                <div class="info-stat-card">
+                                    <span class="stat-number text-success">357</span>
+                                    <span class="stat-label">Benign (62.7%)</span>
+                                </div>
+                            </div>
+
+                            <h4>Analysis Methodology:</h4>
+                            <p>This UI uses two trained models. In the original notebook, models are standardized and evaluated. When running the predictions in real time:</p>
+                            <ol>
+                                <li>Your input parameters are collected from the sliders.</li>
+                                <li>They are normalized using standard scaling: <code>z = (x - mean) / std</code>. The means and standard deviations are computed from the training dataset.</li>
+                                <li>The dot product is taken between the standardized inputs and model coefficients, plus the intercept: <code>score = w · z + b</code>.</li>
+                                <li>For <strong>Logistic Regression</strong>, the score is put through a Sigmoid activation: <code>p = 1 / (1 + e^-score)</code> to get a probability.</li>
+                                <li>For <strong>SVM</strong>, the distance to the linear decision hyperplane is converted to a probability score.</li>
+                            </ol>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+        </main>
+    </div>
+    
+    <!-- Load UI Logic script -->
+    <script src="app.js"></script>
+</body>
+</html>
